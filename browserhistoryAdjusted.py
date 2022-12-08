@@ -182,3 +182,19 @@ def write_browserhistory_csv(limit=None) -> None:
                 pass
 
        
+def write_browserhistory_toArray(limit=None) -> None:
+    """writes to SQL db"""
+    browserhistory = get_browserhistory(limit)
+    counter = 0
+    
+    for browser, history in browserhistory.items():
+        with open(browser + '_history.csv', mode='w', encoding='utf-8', newline='') as csvfile:
+            csv_writer = csv.writer(csvfile, delimiter=',',
+                            quoting=csv.QUOTE_ALL)
+            for data in history:
+                csv_writer.writerow(data)
+            print(counter)
+            counter+=1 
+            if limit != None and counter >= limit:
+                pass
+    return browserhistory

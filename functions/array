@@ -1,0 +1,52 @@
+
+
+def mergeSort(input_list):  #function for merge sort, uses mergeSortHelper and fills in the necessary peramaters since we are using recursion
+    #assert(isinstance(self.input_list, list) #precondtion ensuring the inputed data is a list
+    def merge(myList, left, mid, right):
+        mainPointer = left #setting main pointer to left so we don't overwrite already sorted data
+        leftArray = myList[left:mid]
+        rightArray = myList[mid:right]
+        lP = 0 #left pointer
+        rP = 0 #right pointer
+        while (lP < len(leftArray) and rP < len(rightArray)): #to avoid index error
+            if(leftArray[lP][1] > rightArray[rP][1]): #left greater than right, add the current rightPointer value to the main array
+                myList[mainPointer] = rightArray[rP] #then inccrease both the right and main pointer to avoid over writing 
+                rP += 1
+                mainPointer += 1
+            else:                                   #left array value is added to the main array
+                myList[mainPointer] = leftArray[lP] #main pointer and left pointer increase by 1 to avoid overwriting
+                lP += 1
+                mainPointer += 1
+
+        while (lP < len(leftArray)):  #if left array hasn't been completely read over this runs
+            myList[mainPointer] = leftArray[lP] #add the rest of the left array to main array as right is empty
+            lP += 1
+            mainPointer += 1
+            
+        while (rP < len(rightArray)): #if right array hasn't been completely read over this runs
+            myList[mainPointer] = rightArray[rP]  #add the rest of the right array to main array as left is empty
+            rP+=1
+            mainPointer+= 1
+    
+    def mergeSortHelper(myList,left,right):
+
+        mid = (right+left)//2
+        if(right-left <= 1):
+            #print(myList[left:right])
+            return 
+        else:
+        
+            #print(f'left:{left}, mid:{mid}, right:{right}')
+            #print(myList[left:right])
+            # start = time.time()
+            mergeSortHelper(myList, left, mid) #mergeSorting the left portion of the list
+            mergeSortHelper(myList, mid, right) #mergeSorting the right portion of the list
+            merge(myList, left, mid, right) #merging the sublists after they've been split
+            return myList   #returning the modified list
+            # stop = time.time()
+            # print(f'split{stop-start}')
+
+    sorted_list = input_list[:]
+    sorted_list = mergeSortHelper(sorted_list,0,len(sorted_list))
+    #assert(self.is_sorted(sorted_list) == True) #post-condition checking that the returned list is sorted
+    return sorted_list
