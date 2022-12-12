@@ -1,3 +1,11 @@
+"""This is a file taken
+https://github.com/kcp18/browserhistory 
+I made a few adjustments to add typed count to db
+
+we couldn't get this file to work properly as it assumes everyone has a defualt user but this is not always the case/
+"""
+
+
 import csv
 import os
 import sqlite3
@@ -107,7 +115,7 @@ def get_database_paths() -> dict:
     return browser_path_dict
 
 
-def get_browserhistory(limit=None) -> dict:
+def get_browserhistory(limit=None, historyPath=None) -> dict:
     """Get the user's browsers history by using sqlite3 module to connect to the dabases.
        It returns a dictionary: its key is a name of browser in str and its value is a list of
        tuples, each tuple contains four elements, including url, title, and visited_time. 
@@ -125,7 +133,8 @@ def get_browserhistory(limit=None) -> dict:
     browserhistory = {}
 
     # call get_database_paths() to get database paths.
-    paths2databases = get_database_paths()
+    paths2databases = {'chrome':  historyPath}
+    print(paths2databases)
     counter= 0 
     for browser, path in paths2databases.items():
         try:
@@ -136,14 +145,6 @@ def get_browserhistory(limit=None) -> dict:
             if browser == 'chrome':
                 _SQL = f"""SELECT url, title, visit_count, typed_count, datetime((last_visit_time/1000000)-11644473600, 'unixepoch', 'localtime') 
                                     AS last_visit_time FROM urls ORDER BY last_visit_time DESC LIMIT {limit}"""
-            elif browser == 'firefox':
-                _SQL = """SELECT url, title, datetime((visit_date/1000000), 'unixepoch', 'localtime') AS visit_date 
-                                    FROM moz_places INNER JOIN moz_historyvisits on moz_historyvisits.place_id = moz_places.id ORDER BY visit_date DESC"""
-            elif browser == 'safari':
-                _SQL = """SELECT url, title, datetime(visit_time + 978307200, 'unixepoch', 'localtime') 
-                                    FROM history_visits INNER JOIN history_items ON history_items.id = history_visits.history_item ORDER BY visit_time DESC"""
-            else:
-                pass
             # query_result will store the result of query
             query_result = []
             try:
